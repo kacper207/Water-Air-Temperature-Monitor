@@ -59,7 +59,6 @@ Both panels are connected in daisy-chain via IDC cable. The first panel connects
 #define B_COEFFICIENT 3950    // NTC B coefficient — adjust for your sensor
 ```
 
-> **Note:** The `B_COEFFICIENT` value depends on your specific NTC thermistor. Check your datasheet — common values are `3435`, `3950`, or similar. An incorrect value will cause inaccurate air temperature readings.
 
 ## How It Works
 
