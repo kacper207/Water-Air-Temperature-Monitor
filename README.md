@@ -73,4 +73,4 @@ Both panels are connected in daisy-chain via IDC cable. The first panel connects
 
 - Panels are physically mounted upside-down, hence the pixel mirroring in `drawStringMirrored()`
 - `noInterrupts()` / `interrupts()` is used during pixel updates to prevent partial-frame flicker caused by DMD2's background refresh timer
-- Power the LED panels from the external 5V supply, not from the Arduino's 5V pin
+- Power the LED panels from the external 5V supply, not from the Arduino's 5V pin.
