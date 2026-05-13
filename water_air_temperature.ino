@@ -2,7 +2,7 @@
 #include <DMD2.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
-#include "fonts/Arial14.h"
+#include "fonts/Droid_Sans_16.h"
 
 #define ONE_WIRE_BUS 3
 #define NTC_PIN A0
@@ -61,7 +61,7 @@ void setup() {
   sensors.begin();
   dmd.setBrightness(200);
   dmd.begin();
-  dmd.selectFont(Arial14);
+  dmd.selectFont(Droid_Sans_16);
 }
 
 void loop() {
@@ -80,7 +80,7 @@ void loop() {
       lastTempAir = tempAir;
       dtostrf(tempAir, 4, 1, tmp);
       sprintf(buf, "%s\xB0", tmp);
-      drawStringMirrored(buf, 2, 3, 0, 64);
+      drawStringMirrored(buf, 2, 1, 0, 64);
     }
 
     // prawy panel — woda
@@ -88,7 +88,7 @@ void loop() {
       lastTempWater = tempWater;
       dtostrf(tempWater, 4, 1, tmp);
       sprintf(buf, "%s\xB0", tmp);
-      drawStringMirrored(buf, 2, 3, 32, 96);
+      drawStringMirrored(buf, 2, 1, 32, 96);
     }
   }
 }
