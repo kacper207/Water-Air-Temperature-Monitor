@@ -14,7 +14,7 @@
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 
-SPIDMD dmd(2, 1);
+SPIDMD dmd(4, 1);
 
 unsigned long lastRead = 0;
 float lastTempWater = -999.0;
@@ -23,31 +23,26 @@ float lastTempAir = -999.0;
 #define PANEL_W 32
 #define DMD_H 16
 
-void drawStringMirrored(const char* str, int x, int y, int panelOffsetX) {
-  bool buf[PANEL_W][DMD_H];
+void drawStringMirrored(const char* str, int x, int y, int panelOffsetX, int scratchOffsetX) {
+  // Czyścimy TYLKO nasz niewidoczny panel
+  for (int px = 0; px < PANEL_W; px++) {
+    for (int py = 0; py < DMD_H; py++) {
+      dmd.setPixel(px + scratchOffsetX, py, GRAPHICS_OFF);
+    }
+  }
 
-  for (int px = 0; px < PANEL_W; px++)
-    for (int py = 0; py < DMD_H; py++)
-      buf[px][py] = false;
+  dmd.drawString(x + scratchOffsetX, y, str);
 
-  for (int px = 0; px < PANEL_W; px++)
-    for (int py = 0; py < DMD_H; py++)
-      dmd.setPixel(px + panelOffsetX, py, GRAPHICS_OFF);
+  for (int px = 0; px < PANEL_W; px++) {
+    for (int py = 0; py < DMD_H; py++) {
+      bool pixelState = dmd.getPixel(px + scratchOffsetX, py);
+      
+      int targetX = panelOffsetX + (PANEL_W - 1) - px;
+      int targetY = (DMD_H - 1) - py;
 
-  dmd.drawString(x + panelOffsetX, y, str);
-
-  for (int px = 0; px < PANEL_W; px++)
-    for (int py = 0; py < DMD_H; py++)
-      buf[px][py] = dmd.getPixel(px + panelOffsetX, py);
-
-  for (int px = 0; px < PANEL_W; px++)
-    for (int py = 0; py < DMD_H; py++)
-      dmd.setPixel(px + panelOffsetX, py, GRAPHICS_OFF);
-
-  for (int px = 0; px < PANEL_W; px++)
-    for (int py = 0; py < DMD_H; py++)
-      if (buf[px][py])
-        dmd.setPixel(panelOffsetX + (PANEL_W - 1) - px, (DMD_H - 1) - py, GRAPHICS_ON);
+      dmd.setPixel(targetX, targetY, pixelState ? GRAPHICS_ON : GRAPHICS_OFF);
+    }
+  }
 }
 
 float readNTCTemperature() {
@@ -85,7 +80,7 @@ void loop() {
       lastTempAir = tempAir;
       dtostrf(tempAir, 4, 1, tmp);
       sprintf(buf, "%s\xB0", tmp);
-      drawStringMirrored(buf, 2, 3, 32);
+      drawStringMirrored(buf, 2, 3, 0, 64);
     }
 
     // prawy panel — woda
@@ -93,7 +88,7 @@ void loop() {
       lastTempWater = tempWater;
       dtostrf(tempWater, 4, 1, tmp);
       sprintf(buf, "%s\xB0", tmp);
-      drawStringMirrored(buf, 2, 3, 0);
+      drawStringMirrored(buf, 2, 3, 32, 96);
     }
   }
 }
